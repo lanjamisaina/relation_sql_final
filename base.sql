@@ -1,82 +1,104 @@
-CREATE TABLE Partenaire(
-   IDpartenaire INT AUTO_INCREMENT,
-   Nom VARCHAR(50)  NOT NULL,
-   Description VARCHAR(50) ,
-   PRIMARY KEY(IDpartenaire)
+-- Table Utilisateur
+CREATE TABLE Utilisateur (
+    IdUtilisateur INT PRIMARY KEY,
+    Nom VARCHAR(50),
+    Prenom VARCHAR(50),
+    Email VARCHAR(100),
+    Role VARCHAR(50)
 );
 
-CREATE TABLE Specialite(
-   IDspecialite INT AUTO_INCREMENT,
-   Intitule VARCHAR(50)  NOT NULL,
-   PRIMARY KEY(IDspecialite)
+-- Table Evenement  
+CREATE TABLE Evenement (
+    IdEvenement INT PRIMARY KEY,
+    Nom VARCHAR(100),
+    Date DATE,
+    Type VARCHAR(50),
+    Description TEXT,
+    Statut VARCHAR(20)
 );
 
-CREATE TABLE Projet(
-   IDprojet INT AUTO_INCREMENT,
-   Num INT NOT NULL,
-   Nom VARCHAR(50) ,
-   Debut DATE,
-   Fin DATE,
-   IDspecialite INT NOT NULL,
-   PRIMARY KEY(IDprojet),
-   FOREIGN KEY(IDspecialite) REFERENCES Specialite(IDspecialite)
+-- Table de relation Utilisateur_Evenement
+CREATE TABLE Utilisateur_Evenement (
+    IdUtilisateur INT,
+    IdEvenement INT,
+    PRIMARY KEY (IdUtilisateur, IdEvenement),
+    FOREIGN KEY (IdUtilisateur) REFERENCES Utilisateur(IdUtilisateur),
+    FOREIGN KEY (IdEvenement) REFERENCES Evenement(IdEvenement)
 );
 
-CREATE TABLE Membre(
-   IdMembre INT AUTO_INCREMENT,
-   Prenom VARCHAR(50)  NOT NULL,
-   Nom VARCHAR(50) ,
-   IDspecialite INT,
-   IDprojet INT NOT NULL,
-   PRIMARY KEY(IdMembre),
-   FOREIGN KEY(IDspecialite) REFERENCES Specialite(IDspecialite),
-   FOREIGN KEY(IDprojet) REFERENCES Projet(IDprojet)
+-- Table Sprint
+CREATE TABLE Sprint (
+    IDsprint INT PRIMARY KEY,
+    Nom VARCHAR(100),
+    DateDebut DATE,
+    DateFin DATE, 
+    Description TEXT,
+    Statut VARCHAR(20),
+    IDprojet INT,
+    FOREIGN KEY (IDprojet) REFERENCES Projet(IDprojet)
 );
 
-CREATE TABLE Sprint(
-   IDsprint VARCHAR(50) ,
-   Nom VARCHAR(50) ,
-   IDprojet INT NOT NULL,
-   PRIMARY KEY(IDsprint),
-   FOREIGN KEY(IDprojet) REFERENCES Projet(IDprojet)
+-- Table Projet
+CREATE TABLE Projet (
+    IDprojet INT PRIMARY KEY,
+    Num VARCHAR(20),
+    Nom VARCHAR(100),
+    Debut DATE,
+    Fin DATE,
+    Description TEXT,
+    Budget DECIMAL(10,2),
+    Statut VARCHAR(20)
 );
 
-CREATE TABLE Backlog(
-   IDBacklog INT AUTO_INCREMENT,
-   Nom VARCHAR(50) ,
-   IDsprint VARCHAR(50)  NOT NULL,
-   PRIMARY KEY(IDBacklog),
-   FOREIGN KEY(IDsprint) REFERENCES Sprint(IDsprint)
+-- Table de relation Utilisateur_Projet
+CREATE TABLE Utilisateur_Projet (
+    IdUtilisateur INT,
+    IDprojet INT,
+    PRIMARY KEY (IdUtilisateur, IDprojet),
+    FOREIGN KEY (IdUtilisateur) REFERENCES Utilisateur(IdUtilisateur),
+    FOREIGN KEY (IDprojet) REFERENCES Projet(IDprojet)
 );
 
-CREATE TABLE Tache(
-   IDprojet INT,
-   IDtache INT AUTO_INCREMENT,
-   Num INT NOT NULL,
-   Nom VARCHAR(50) ,
-   Debut DATE,
-   Fin DATE,
-   IDBacklog INT NOT NULL,
-   PRIMARY KEY(IDprojet, IDtache),
-   FOREIGN KEY(IDprojet) REFERENCES Projet(IDprojet),
-   FOREIGN KEY(IDBacklog) REFERENCES Backlog(IDBacklog)
+-- Table Tache
+CREATE TABLE Tache (
+    IDtache INT PRIMARY KEY,
+    Num VARCHAR(20),
+    Nom VARCHAR(100),
+    Debut DATE,
+    Fin DATE,
+    Priorite INT,
+    Statut VARCHAR(20),
+    Description TEXT,
+    EstimationTemps DECIMAL(8,2),
+    IDprojet INT,
+    FOREIGN KEY (IDprojet) REFERENCES Projet(IDprojet)
 );
 
-CREATE TABLE estAssocie(
-   IDprojet INT,
-   IDpartenaire INT,
-   Role VARCHAR(50) ,
-   PRIMARY KEY(IDprojet, IDpartenaire),
-   FOREIGN KEY(IDprojet) REFERENCES Projet(IDprojet),
-   FOREIGN KEY(IDpartenaire) REFERENCES Partenaire(IDpartenaire)
+-- Table de relation Utilisateur_Tache
+CREATE TABLE Utilisateur_Tache (
+    IdUtilisateur INT,
+    IDtache INT,
+    PRIMARY KEY (IdUtilisateur, IDtache),
+    FOREIGN KEY (IdUtilisateur) REFERENCES Utilisateur(IdUtilisateur),
+    FOREIGN KEY (IDtache) REFERENCES Tache(IDtache)
 );
 
-CREATE TABLE Participe(
-   IDprojet INT,
-   IDtache INT,
-   IdMembre INT,
-   Fonction VARCHAR(50) ,
-   PRIMARY KEY(IDprojet, IDtache, IdMembre),
-   FOREIGN KEY(IDprojet, IDtache) REFERENCES Tache(IDprojet, IDtache),
-   FOREIGN KEY(IdMembre) REFERENCES Membre(IdMembre)
+-- Table Deliverable
+CREATE TABLE Deliverable (
+    IdDeliverable INT PRIMARY KEY,
+    Nom VARCHAR(100),
+    Date DATE,
+    Description TEXT,
+    Statut VARCHAR(20),
+    IDprojet INT,
+    FOREIGN KEY (IDprojet) REFERENCES Projet(IDprojet)
+);
+
+-- Table de relation Utilisateur_Deliverable
+CREATE TABLE Utilisateur_Deliverable (
+    IdUtilisateur INT,
+    IdDeliverable INT,
+    PRIMARY KEY (IdUtilisateur, IdDeliverable),
+    FOREIGN KEY (IdUtilisateur) REFERENCES Utilisateur(IdUtilisateur),
+    FOREIGN KEY (IdDeliverable) REFERENCES Deliverable(IdDeliverable)
 );
